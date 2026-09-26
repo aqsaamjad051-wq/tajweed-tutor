@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tajweed Rules Practice</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fff4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .rule-card {
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0, 123, 94, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .rule-title {
+      font-size: 20px;
+      color: #007B5E;
+      font-weight: bold;
+    }
+    .rule-text {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .ayah {
+      font-size: 20px;
+      color: #007B5E;
+      margin: 10px 0;
+    }
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .nav-btn {
+      padding: 10px 20px;
+      background-color: #007B5E;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .audio-btn {
+      background-color: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #007B5E;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align:center; color:#007B5E;">📚 Tajweed Rules Practice</h2>
+
+    <!-- Repeatable Rule Cards -->
+    <div class="rule-card">
+      <div class="rule-title">🔹 Ikhfa</div>
+      <div class="rule-text" id="rule-text-ikhfa"></div>
+      <div class="ayah">📖 إِنَّ اللّٰهَ غَفُوْرٌ رَّحِیْمٌ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/ikhfa.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Idgham</div>
+      <div class="rule-text" id="rule-text-idgham"></div>
+      <div class="ayah">📖 مِنْ لَّدُنْ حَكِيْمٍ خَبِيْرٍ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/idgham.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Iqlab</div>
+      <div class="rule-text" id="rule-text-iqlab"></div>
+      <div class="ayah">📖 يُنْبِتُ لَكُمْ بِهِ الزَّرْعَ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/iqlab.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Qalqala</div>
+      <div class="rule-text" id="rule-text-qalqala"></div>
+      <div class="ayah">📖 وَالْفَجْرِ وَلَيَالٍ عَشْرٍ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/qalqala.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Ghunna</div>
+      <div class="rule-text" id="rule-text-ghunna"></div>
+      <div class="ayah">📖 إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/ghunna.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Madd</div>
+      <div class="rule-text" id="rule-text-madd"></div>
+      <div class="ayah">📖 وَلَا الضَّالِّينَ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/madd.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Waqf</div>
+      <div class="rule-text" id="rule-text-waqf"></div>
+      <div class="ayah">📖 وَقِفُوهُمْ ۖ إِنَّهُم مَّسْئُولُونَ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/waqf.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Noon Saakin</div>
+      <div class="rule-text" id="rule-text-noon_saakin"></div>
+      <div class="ayah">📖 فَإِن لَّمْ تَفْعَلُوا</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/noon_saakin.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Meem Saakin</div>
+      <div class="rule-text" id="rule-text-meem_saakin"></div>
+      <div class="ayah">📖 وَأَنْفِقُوا فِي سَبِيلِ اللَّهِ</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/meem_saakin.mp3')">▶️ Play Example</button>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">🔹 Tajweed</div>
+      <div class="rule-text" id="rule-text-tajweed"></div>
+      <div class="ayah">📖 وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</div>
+      <button class="audio-btn" onclick="toggleAudio('example_audio/tajweed.mp3')">▶️ Play Example</button>
+    </div>
+
+  <button class="nav-btn" onclick="window.location.href='next-rules.html'">⬅ Back</button>
+  <button class="nav-btn" onclick="window.location.href='recitation.html'">➡ Recitation Evaluation</button>
+ <button class="nav-btn" onclick="window.location.href='recitation.html'">Next ➡</button>
+  </div>
+
+  <script>
+    let currentAudio = null;
+
+    function toggleAudio(src) {
+      if (currentAudio && currentAudio.src.includes(src)) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      } else {
+        if (currentAudio) {
+          currentAudio.pause();
+        }
+        currentAudio = new Audio(src);
+        currentAudio.play();
+        currentAudio.onended = () => {
+          currentAudio = null;
+        };
+      }
+    }
+
+    const lang = localStorage.getItem("lang") || "en";
+
+    const ruleTexts = {
+      ikhfa: {
+        en: "Ikhfa means to slightly hide the sound of Noon Saakin or Tanween.",
+        ur: "اخفاء کا مطلب ہے نون ساکن یا تنوین کی آواز کو تھوڑا چھپانا۔",
+        ar: "الإخفاء يعني إخفاء صوت النون الساكنة أو التنوين قليلاً"
+      },
+      idgham: {
+        en: "Idgham means merging the sound of Noon Saakin or Tanween into the next letter.",
+        ur: "ادغام کا مطلب ہے نون ساکن یا تنوین کو اگلے حرف میں ملا دینا۔",
+        ar: "الإدغام يعني إدخال النون الساكنة أو التنوين في الحرف التالي"
+      },
+      iqlab: {
+        en: "Iqlab means changing Noon Saakin or Tanween into Meem with Ghunnah.",
+        ur: "اقلاب کا مطلب ہے نون ساکن یا تنوین کو میم میں تبدیل کرنا غنہ کے ساتھ۔",
+        ar: "الإقلاب يعني تحويل النون الساكنة أو التنوين إلى ميم مع غنة"
+      },
+      qalqala: {
+        en: "Qalqala is the echoing sound on Qaf, Ta, Ba, Jeem, Dal with sukoon.",
+        ur: "قلقلہ ق، ط، ب، ج، د پر سکون کی حالت میں گونج دار آواز دینا ہے۔",
+        ar: "القلقلة هي تكرار الصوت في الحروف ق، ط، ب، ج، د عند السكون"
+      },
+      ghunna: {
+        en: "Ghunna is the nasal sound that continues for two counts.",
+        ur: "غنہ ایک ناک سے نکالی جانے والی آواز ہے جو دو حرکات تک کھینچی جاتی ہے۔",
+        ar: "الغنة هي صوت أنفي يستمر بمقدار حركتين"
+      },
+      madd: {
+        en: "Madd means to stretch a vowel sound for 2, 4, or 6 counts.",
+        ur: "مد کا مطلب ہے حرف علت کو 2، 4 یا 6 حرکات تک کھینچنا۔",
+        ar: "المَدّ يعني إطالة الصوت بالحرف بمقدار 2 أو 4 أو 6 حركات"
+      },
+      waqf: {
+        en: "Waqf refers to pausing at certain symbols during recitation.",
+        ur: "وقف کا مطلب ہے تلاوت کے دوران مخصوص علامات پر رکنا۔",
+        ar: "الوقف هو التوقف عند رموز معينة أثناء التلاوة."
+      },
+      noon_saakin: {
+        en: "Noon Saakin rules include Ikhfa, Idgham, Iqlab, and Izhar.",
+        ur: "نون ساکن کے قواعد میں اخفاء، ادغام، اقلاب اور اظہار شامل ہیں۔",
+        ar: "قواعد النون الساكنة تشمل الإخفاء، الإدغام، الإقلاب، والإظهار."
+      },
+      meem_saakin: {
+        en: "Meem Saakin rules include Ikhfa Shafawi, Idgham Shafawi, and Izhar Shafawi.",
+        ur: "میم ساکن کے قواعد میں اخفاء شفوی، ادغام شفوی، اور اظہار شفوی شامل ہیں۔",
+        ar: "قواعد الميم الساكنة تشمل الإخفاء الشفوي، الإدغام الشفوي، والإظهار الشفوي."
+      },
+      tajweed: {
+        en: "Tajweed is the science of correct pronunciation during Quranic recitation.",
+        ur: "تجوید قرآن کی درست ادائیگی کے اصولوں کا علم ہے۔",
+        ar: "التجويد هو علم النطق الصحيح لكلمات القرآن الكريم."
+      }
+    };
+
+    for (let key in ruleTexts) {
+      const el = document.getElementById("rule-text-" + key);
+      if (el) el.innerText = ruleTexts[key][lang];
+    }
+  </script>
+</body>
+</html>

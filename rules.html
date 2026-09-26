@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tajweed Rules - Lesson View</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fff4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007B5E;
+    }
+
+    .lesson-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .rule-card {
+      background-color: #ffffff;
+      border: 2px solid #007B5E;
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rule-card h3 {
+      color: #007B5E;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .rule-card p {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .speak-btn {
+      margin-right: 10px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007B5E;
+      color: white;
+      cursor: pointer;
+    }
+
+    .next-btn {
+      display: block;
+      margin: 40px auto;
+      background-color: #007B5E;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .next-btn:hover {
+      background-color: #005c45;
+    }
+
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .ltr {
+      direction: ltr;
+      text-align: left;
+    }
+
+    .diamond {
+      color: #007B5E;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="goToChatbot()" style="
+  background-color: #007B5E;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+">
+  🔙 Back to Chatbot
+</button>
+
+
+<h1>🌿 Tajweed Rules - Lesson 1 🌿</h1>
+
+<div class="lesson-container" id="lessonArea"></div>
+
+<button class="next-btn" onclick="goToNext()">Next ➡️</button>
+
+<script>
+const rules = [
+  {
+    key: "ikhfa",
+    title: "Ikhfa",
+    en: "Ikhfa means to slightly hide the sound of Noon Saakin or Tanween.",
+    ur: "اخفاء کا مطلب ہے نون ساکن یا تنوین کی آواز کو تھوڑا چھپانا۔",
+    ar: "الإخفاء يعني إخفاء صوت النون الساكنة أو التنوين قليلاً."
+  },
+  {
+    key: "idgham",
+    title: "Idgham",
+    en: "Idgham means merging the sound of Noon Saakin or Tanween into the next letter.",
+    ur: "ادغام کا مطلب ہے نون ساکن یا تنوین کو اگلے حرف میں ملا دینا۔",
+    ar: "الإدغام يعني إدخال النون الساكنة أو التنوين في الحرف التالي."
+  },
+  {
+    key: "iqlab",
+    title: "Iqlab",
+    en: "Iqlab means changing Noon Saakin or Tanween into Meem with Ghunnah.",
+    ur: "اقلاب کا مطلب ہے نون ساکن یا تنوین کو میم میں تبدیل کرنا غنہ کے ساتھ۔",
+    ar: "الإقلاب يعني تحويل النون الساكنة أو التنوين إلى ميم مع غنة."
+  },
+  {
+    key: "qalqala",
+    title: "Qalqala",
+    en: "Qalqala is the echoing sound on letters Qaf, Ta, Ba, Jeem, Dal when there is sukoon.",
+    ur: "قلقلہ ان حروف ق، ط، ب، ج، د پر سکون کی حالت میں گونج دار آواز دینا ہے۔",
+    ar: "القلقلة هي تكرار الصوت في الحروف ق، ط، ب، ج، د عند السكون."
+  },
+  {
+    key: "ghunna",
+    title: "Ghunna",
+    en: "Ghunna is the nasal sound that continues for two counts.",
+    ur: "غنہ ایک ناک سے نکالی جانے والی آواز ہے جو دو حرکات تک کھینچی جاتی ہے۔",
+    ar: "الغنة هي صوت أنفي يستمر بمقدار حركتين."
+  },
+  {
+    key: "madd",
+    title: "Madd",
+    en: "Madd means to stretch a vowel sound for 2, 4, or 6 counts.",
+    ur: "مد کا مطلب ہے حرف علت کو دو، چار یا چھ حرکات تک کھینچنا۔",
+    ar: "المد يعني إطالة الصوت بالحرف بمقدار 2 أو 4 أو 6 حركات."
+  }
+];
+
+const lessonArea = document.getElementById("lessonArea");
+
+rules.forEach(rule => {
+  const card = document.createElement("div");
+  card.className = "rule-card";
+  card.innerHTML = `
+    <h3>${rule.title}</h3>
+    <p class="ltr"><span class="diamond">🔹</span> ${rule.en}</p>
+    <button class="speak-btn" onclick="speak('${rule.en}', 'en', '${rule.key}')">🔊 Speak</button>
+
+    <p class="rtl"><span class="diamond">🔹</span> ${rule.ur}</p>
+    <button class="speak-btn" onclick="speak('${rule.ur}', 'ur', '${rule.key}')">🔊 Speak</button>
+
+    <p class="rtl"><span class="diamond">🔹</span> ${rule.ar}</p>
+    <button class="speak-btn" onclick="speak('${rule.ar}', 'ar', '${rule.key}')">🔊 Speak</button>
+  `;
+  lessonArea.appendChild(card);
+});
+
+let currentAudio = null;
+let currentKey = "";
+let isPaused = false;
+
+function speak(text, lang, key) {
+  const cleanedText = text.replace(/🔹/g, "").replace(/<[^>]*>/g, "");
+
+  if (lang === "ur") {
+    const audioPath = "audio/" + key + ".mp3";
+    if (currentAudio && currentKey === key) {
+      isPaused ? currentAudio.play() : currentAudio.pause();
+      isPaused = !isPaused;
+    } else {
+      if (currentAudio) currentAudio.pause();
+      currentAudio = new Audio(audioPath + "?v=" + new Date().getTime());
+      currentKey = key;
+      isPaused = false;
+      currentAudio.play();
+      currentAudio.onended = () => {
+        currentAudio = null;
+        currentKey = "";
+        isPaused = false;
+      };
+    }
+  } else if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(cleanedText);
+    utter.lang = lang === "ar" ? "ar-SA" : "en-US";
+    speechSynthesis.speak(utter);
+  } else {
+    alert("Speech synthesis not supported in your browser.");
+  }
+}
+
+function goToNext() {
+  window.location.href = "next-rules.html";
+}
+function goToChatbot() {
+  window.location.href = "chatbot.php"; // update the file name if different
+}
+</script>
+</body>
+</html>

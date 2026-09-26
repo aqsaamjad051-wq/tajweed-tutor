@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Progress Report</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0fff4;
+      padding: 20px;
+    }
+    h2 {
+      color: #007B5E;
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 8px 14px;
+      background: #007B5E;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #007B5E;
+      color: #fff;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <h2>📈 Your Quiz Attempts</h2>
+  <button onclick="downloadPDF()">📄 Download Report</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date & Time</th>
+        <th>User</th>
+        <th>Language</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="report-body"></tbody>
+  </table>
+
+  <script>
+    let reportData = [];
+
+    fetch("http://localhost:5001/progress_report")
+      .then(res => res.json())
+      .then(data => {
+        reportData = data;
+        const tbody = document.getElementById("report-body");
+        data.forEach(rec => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${rec.time}</td>
+            <td>${rec.user}</td>
+            <td>${rec.lang}</td>
+            <td>${rec.score}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(() => {
+        document.body.insertAdjacentHTML('beforeend',
+          '<p style="color:red;">Could not load report.</p>');
+      });
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 20;
+
+      doc.setFontSize(14);
+      doc.text("Tajweed Tutor - Quiz Progress Report", 14, y);
+      y += 10;
+
+      reportData.forEach((rec, index) => {
+        doc.setFontSize(11);
+        doc.text(`${index + 1}. Date: ${rec.time}`, 14, y += 10);
+        doc.text(`   User: ${rec.user} | Lang: ${rec.lang} | Score: ${rec.score}`, 14, y += 6);
+      });
+
+      doc.save("progress_report.pdf");
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Tajweed Quiz</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fff4;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #007B5E;
+    }
+    .lang-select {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .quiz-container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .question-box {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,123,94,0.1);
+    }
+    .question {
+      font-weight: bold;
+    }
+    .option {
+      margin-top: 5px;
+    }
+    .progress-bar {
+      width: 80%;
+      background: #eee;
+      border-radius: 10px;
+      height: 20px;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #007B5E;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+    .result-box {
+      background: #e0f7f1;
+      border-left: 5px solid #007B5E;
+      padding: 15px;
+      margin: 20px auto;
+      border-radius: 10px;
+      max-width: 800px;
+      display: none;
+    }
+    .correct { color: green; }
+    .wrong   { color: red; }
+    .stars   { font-size: 24px; text-align: center; margin-top: 10px; }
+    .button-group {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .small-btn {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin: 6px;
+      background-color: #007B5E;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📝 Tajweed Quiz</h1>
+
+<div class="lang-select">
+  <label for="language">🌍 Select Language:</label>
+  <select id="language">
+    <option value="en">English</option>
+    <option value="ur">اردو</option>
+    <option value="ar">العربية</option>
+  </select>
+</div>
+
+<div class="progress-bar">
+  <div id="progress-fill" class="progress-bar-fill"></div>
+</div>
+
+<div id="quiz-container" class="quiz-container"></div>
+
+<div class="button-group">
+  <button id="submit-btn" class="small-btn">✅ Submit Quiz</button>
+  <button id="retry-btn"  class="small-btn" style="display:none;">🔁 Retry Quiz</button>
+  <button id="pdf-btn"    class="small-btn" style="display:none;">📄 Download PDF</button>
+  <button id="home-btn"   class="small-btn">🏠 Home</button>
+  <button id="back-btn"   class="small-btn">⬅ Back to Recitation</button>
+  <button id="report-btn" class="small-btn">📈 Progress Report</button>
+</div>
+
+<div id="result-box" class="result-box"></div>
+
+<script>
+  const quizData = {
+    en: [ { q: "What does Ikhfa mean?", o: ["To merge","To hide slightly","To echo","To pause"], a: "To hide slightly" },
+      { q: "Which rule changes Noon Saakin into Meem?", o: ["Ikhfa","Iqlab","Qalqala","Idgham"], a: "Iqlab" },
+      { q: "What is the meaning of Qalqala?", o: ["Stretching sound","Nasal sound","Echoing sound","Clear pronunciation"], a: "Echoing sound" },
+      { q: "Ghunna is related to:", o: ["Mouth","Throat","Nose","Tongue"], a: "Nose" },
+      { q: "Waqf refers to:", o: ["Stretching sound","Merging letters","Stopping","Echoing"], a: "Stopping" },
+      { q: "What does Idgham do?", o: ["Stretch sound","Merge into next letter","Stop reading","Echo the sound"], a: "Merge into next letter" },
+      { q: "What does Madd mean?", o: ["Stretching a vowel","Nasal sound","Echoing sound","Pausing"], a: "Stretching a vowel" }
+    ],
+    ur: [ { q: "اخفاء کا کیا مطلب ہے؟", o: ["مدغم کرنا","تھوڑا چھپانا","گونج پیدا کرنا","وقف کرنا"], a: "تھوڑا چھپانا" },
+      { q: "کون سا قاعدہ نون ساکن کو میم میں بدلتا ہے؟", o: ["اخفاء","اقلاب","قلقلہ","ادغام"], a: "اقلاب" },
+      { q: "قلقلہ کا مطلب کیا ہے؟", o: ["آواز کو کھینچنا","ناک کی آواز","گونج دار آواز","واضح تلفظ"], a: "گونج دار آواز" },
+      { q: "غنہ کا تعلق کس سے ہے؟", o: ["منہ","گلا","ناک","زبان"], a: "ناک" },
+      { q: "وقف کس چیز کا نام ہے؟", o: ["آواز کو کھینچنا","حروف کو ملانا","رکنا","گونج"], a: "رکنا" },
+      { q: "ادغام کا مطلب کیا ہے؟", o: ["آواز کھینچنا","اگلے حرف میں ملا دینا","پڑھائی روکنا","آواز گونجنا"], a: "اگلے حرف میں ملا دینا" },
+      { q: "مد کا کیا مطلب ہے؟", o: ["حرکت کو لمبا کرنا","ناک کی آواز","گونج","رک جانا"], a: "حرکت کو لمبا کرنا" }
+    ],
+    ar: [ { q: "ماذا يعني الإخفاء؟", o: ["الادغام","الإخفاء قليلاً","الصدى","الوقف"], a: "الإخفاء قليلاً" },
+      { q: "أي قاعدة تُحوِّل النون الساكنة إلى ميم؟", o: ["إخفاء","إقلاب","قلقلة","إدغام"], a: "إقلاب" },
+      { q: "ما معنى القلقلة؟", o: ["مد الصوت","صوت أنفي","صدى الصوت","النطق الواضح"], a: "صدى الصوت" },
+      { q: "الغنة تتعلق بـ:", o: ["الفم","الحلق","الأنف","اللسان"], a: "الأنف" },
+      { q: "ما المقصود بالوقف؟", o: ["مد الصوت","دمج الحروف","التوقف","الصدى"], a: "التوقف" },
+      { q: "ماذا يفعل الإدغام؟", o: ["مد الصوت","يدمج الحرف التالي","إيقاف التلاوة","صدى الصوت"], a: "يدمج الحرف التالي" },
+      { q: "ما معنى المد؟", o: ["مد الحرف","صوت أنفي","صدى","التوقف"], a: "مد الحرف" }
+    ]
+  };
+
+  const languageSelect = document.getElementById("language");
+  const quizContainer  = document.getElementById("quiz-container");
+  const progressFill   = document.getElementById("progress-fill");
+  const resultBox      = document.getElementById("result-box");
+  const submitBtn      = document.getElementById("submit-btn");
+  const retryBtn       = document.getElementById("retry-btn");
+  const pdfBtn         = document.getElementById("pdf-btn");
+  const homeBtn        = document.getElementById("home-btn");
+  const backBtn        = document.getElementById("back-btn");
+
+  function renderQuiz() {
+    const lang = languageSelect.value;
+    localStorage.setItem("tajweedQuizLang", lang);
+    const data = quizData[lang];
+    quizContainer.innerHTML = "";
+    resultBox.style.display = "none";
+    retryBtn.style.display = "none";
+    pdfBtn.style.display = "none";
+    updateProgress();
+
+    data.forEach((q, i) => {
+      const box = document.createElement("div");
+      box.className = "question-box";
+      let opts = "";
+      q.o.forEach(o => {
+        opts += `<div class="option">
+          <input type="radio" name="q${i}" value="${o}" onchange="updateProgress()"/> ${o}
+        </div>`;
+      });
+      box.innerHTML = `<div class="question">${i+1}. ${q.q}</div>${opts}`;
+      quizContainer.appendChild(box);
+    });
+  }
+
+  function updateProgress() {
+    const lang = languageSelect.value;
+    const total = quizData[lang].length;
+    const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+    const pct = total ? Math.round((answered / total) * 100) : 0;
+    progressFill.style.width = pct + "%";
+  }
+
+  function getStars(score, total) {
+    const r = score / total;
+    if (r === 1) return "🌟🌟🌟";
+    if (r >= 0.7) return "🌟🌟";
+    if (r >= 0.4) return "🌟";
+    return "⭐";
+  }
+
+  function submitQuiz() {
+    const lang = languageSelect.value;
+    const data = quizData[lang];
+    let score = 0, html = "<h3>🔍 Results:</h3><ul>", txt = "";
+
+    data.forEach((q, i) => {
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      const ans = sel ? sel.value : "No answer";
+      txt += `Q${i + 1}: ${q.q}\nYour: ${ans}\nCorrect: ${q.a}\n\n`;
+      if (ans === q.a) {
+        score++;
+        html += `<li>Q${i + 1}: ✅ ${q.a}</li>`;
+      } else {
+        html += `<li>Q${i + 1}: ❌ You: <span class="wrong">${ans}</span> | <span class="correct">${q.a}</span></li>`;
+      }
+    });
+
+    html += `</ul><h3>Score: ${score}/${data.length}</h3>`;
+    if (score === data.length)
+      html += `<p style="text-align:center; color:#007B5E;"><strong>🎉 Perfect score!</strong></p>`;
+    else if (score / data.length >= 0.7)
+      html += `<p style="text-align:center; color:#007B5E;">💫 Great job!</p>`;
+
+    html += `<div class="stars">${getStars(score, data.length)}</div>`;
+
+    resultBox.innerHTML = html;
+    resultBox.style.display = "block";
+    retryBtn.style.display = "inline-block";
+    pdfBtn.style.display = "inline-block";
+    localStorage.setItem("tajweedQuizScore", score);
+    window._quizPDFText = txt + `Score: ${score}/${data.length}`;
+    updateProgress();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+    // ✅ Progress tracking sent to backend
+    fetch("http://localhost:5001/record_progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: "guest",
+        lang: lang,
+        score: score
+      })
+    });
+  }
+
+  function resetQuiz() {
+    renderQuiz();
+  }
+
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const lines = doc.splitTextToSize(window._quizPDFText || "", 180);
+    doc.text(lines, 10, 20);
+    doc.save("quiz_results.pdf");
+  }
+
+  languageSelect.addEventListener("change", renderQuiz);
+  submitBtn.addEventListener("click", submitQuiz);
+  retryBtn.addEventListener("click", resetQuiz);
+  pdfBtn.addEventListener("click", downloadPDF);
+  homeBtn.addEventListener("click", () => location.href = "chatbot.php");
+  backBtn.addEventListener("click", () => location.href = "recitation.html");
+  document.getElementById("report-btn").addEventListener("click", () => {
+    window.location.href = "report.html";
+  });
+
+  const saved = localStorage.getItem("tajweedQuizLang");
+  if (saved) languageSelect.value = saved;
+  renderQuiz();
+</script>
+</body>
+</html>

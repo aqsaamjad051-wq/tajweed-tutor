@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tajweed Recitation</title>
+  <style>
+    body {
+      background: #f0fff4;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #007B5E;
+      margin-bottom: 25px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .ayah-box {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      color: #007B5E;
+    }
+    .spoken-text, .feedback {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .audio-btn {
+      background-color: transparent;
+      border: none;
+      color: #007B5E;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      justify-content: center;
+    }
+    .btn-group button {
+      background-color: #007B5E;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 45%;
+    }
+    .btn-group button:hover {
+      background-color: #006149;
+    }
+    #customAlert, #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+    #customAlert {
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      max-width: 350px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      font-size: 18px;
+      display: none;
+    }
+    #overlay {
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      display: none;
+    }
+    #customAlert button {
+      margin-top: 20px;
+      background: #007B5E;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎤 Tajweed Recitation Feedback</h2>
+
+    <label for="ruleSelect">📘 Choose Tajweed Rule:</label>
+    <select id="ruleSelect">
+      <option value="">-- Select a rule --</option>
+      <option value="ikhfa">Ikhfa</option>
+      <option value="idgham">Idgham</option>
+      <option value="iqlab">Iqlab</option>
+      <option value="qalqala">Qalqala</option>
+      <option value="ghunna">Ghunna</option>
+      <option value="madd">Madd</option>
+      <option value="waqf">Waqf</option>
+      <option value="noon_saakin">Noon Saakin</option>
+      <option value="meem_saakin">Meem Saakin</option>
+      <option value="tajweed">Tajweed</option>
+    </select>
+
+    <label for="langSelect">🌍 Choose Language:</label>
+    <select id="langSelect">
+      <option value="en">English</option>
+      <option value="ur">Urdu</option>
+      <option value="ar">Arabic</option>
+    </select>
+
+    <div class="ayah-box" id="ayahDisplay"></div>
+
+    <button onclick="startRecognition()">🎙️ Start Recitation</button>
+    <button onclick="stopRecognition()">🛑 Stop</button>
+
+    <div class="spoken-text" id="spokenText"></div>
+    <div class="feedback" id="feedbackText"></div>
+
+    <div class="btn-group">
+      <button onclick="window.location.href='practice.html'">⬅ Back to Practice</button>
+      <button onclick="window.location.href='quiz.html'">📝 Take Quiz</button>
+    </div>
+  </div>
+
+  <!-- Custom Alert Box -->
+  <div id="customAlert">
+    <div id="customAlertText">⚠️ Message goes here</div>
+    <button onclick="hideCustomAlert()">OK</button>
+  </div>
+  <div id="overlay" onclick="hideCustomAlert()"></div>
+
+  <script>
+    const ruleExamples = {
+      ikhfa: "إِنَّ اللّٰهَ غَفُوْرٌ رَّحِیْمٌ",
+      idgham: "مِنْ لَّدُنْ حَكِيْمٍ خَبِيْرٍ",
+      iqlab: "يُنْبِتُ لَكُمْ بِهِ الزَّرْعَ",
+      qalqala: "وَالْفَجْرِ وَلَيَالٍ عَشْرٍ",
+      ghunna: "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
+      madd: "وَلَا الضَّالِّينَ",
+      waqf: "وَقِفُوهُمْ ۖ إِنَّهُم مَّسْئُولُونَ",
+      noon_saakin: "فَإِن لَّمْ تَفْعَلُوا",
+      meem_saakin: "وَأَنْفِقُوا فِي سَبِيلِ اللَّهِ",
+      tajweed: "وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا"
+    };
+
+    document.getElementById("ruleSelect").addEventListener("change", function () {
+      const rule = this.value;
+      const ayah = ruleExamples[rule] || "";
+      document.getElementById("ayahDisplay").innerText = ayah ? `📖 ${ayah}` : "";
+    });
+
+    let currentAudio = null;
+
+    function playExample(rule) {
+      const audioSrc = `example_audio/${rule}.mp3`;
+
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+        return;
+      }
+
+      currentAudio = new Audio(audioSrc);
+      currentAudio.play();
+
+      currentAudio.onended = () => {
+        currentAudio = null;
+      };
+    }
+
+    let recognition, isRecording = false;
+
+    function startRecognition() {
+      const rule = document.getElementById("ruleSelect").value;
+      const lang = document.getElementById("langSelect").value;
+      if (!rule || !lang) {
+        showCustomAlert("⚠️ Please select a rule and language.");
+        return;
+      }
+
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "ar-SA";
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        document.getElementById("spokenText").innerText = "🎧 Listening...";
+        document.getElementById("feedbackText").innerText = "";
+      };
+
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        document.getElementById("spokenText").innerText = "🗣️ You said: " + text;
+
+        fetch("http://localhost:5001/recite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, rule, lang })
+        })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("feedbackText").innerHTML = `
+            ${data.feedback.join("<br>")}
+            <br>
+            <button onclick="playExample('${rule}')" class="audio-btn">▶️ Play Example Again</button>
+          `;
+        })
+        .catch(() => {
+          document.getElementById("feedbackText").innerText = "❌ Could not process feedback.";
+        });
+
+        isRecording = false;
+      };
+
+             recognition.onerror = () => {
+          document.getElementById("spokenText").innerText = "❌ Recognition error.";
+          isRecording = false;
+        };
+
+        recognition.start();
+      }
+
+      function stopRecognition() {
+        if (recognition && isRecording) {
+          recognition.stop();
+          isRecording = false;
+        }
+      }
+
+      function showCustomAlert(message) {
+        document.getElementById("customAlertText").innerText = message;
+        document.getElementById("customAlert").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+      }
+
+      function hideCustomAlert() {
+        document.getElementById("customAlert").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+      }
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Tajweed Tutor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fff4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #007B5E;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    section {
+      padding: 20px;
+      text-align: center;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input, button {
+      display: block;
+      width: 80%;
+      max-width: 300px;
+      padding: 10px;
+      margin: 10px auto;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007B5E;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: -8px;
+      margin-bottom: 10px;
+      max-width: 300px;
+      text-align: left;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌿 Sign Up to Tajweed Tutor 🌿</h1>
+  </header>
+  <section>
+    <h2>Create New Account</h2>
+    <form method="POST" action="register.php" onsubmit="return validateSignup()">
+      <input type="text" name="username" id="username" placeholder="Username (2–12 chars)">
+      <p id="usernameError" class="error"></p>
+
+      <input type="email" name="email" id="email" placeholder="Email">
+      <p id="emailError" class="error"></p>
+
+      <input type="text" name="phone" id="phone" placeholder="Phone Number">
+      <p id="phoneError" class="error"></p>
+
+      <input type="password" name="password" id="password" placeholder="Password (min 6 chars)">
+      <p id="passwordError" class="error"></p>
+
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>If you already have an account, <a href="login.html">Login here</a></p>
+  </section>
+
+  <script>
+    function validateSignup() {
+      document.getElementById("usernameError").textContent = "";
+      document.getElementById("emailError").textContent = "";
+      document.getElementById("phoneError").textContent = "";
+      document.getElementById("passwordError").textContent = "";
+
+      let isValid = true;
+
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (username.length < 2 || username.length > 12) {
+        document.getElementById("usernameError").textContent = "Username must be 2–12 characters.";
+        isValid = false;
+      }
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        document.getElementById("emailError").textContent = "Please enter a valid email.";
+        isValid = false;
+      }
+
+      if (!/^[0-9]{10,14}$/.test(phone)) {
+        document.getElementById("phoneError").textContent = "Phone number must be 10–14 digits.";
+        isValid = false;
+      }
+
+      if (password.length < 6) {
+        document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+        isValid = false;
+      }
+
+      return isValid;
+    }
+  </script>
+</body>
+</html>
+

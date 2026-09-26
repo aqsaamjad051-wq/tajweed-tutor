@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tajweed Rules - Lesson 2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fff4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007B5E;
+    }
+
+    .lesson-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .rule-card {
+      background-color: #ffffff;
+      border: 2px solid #007B5E;
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rule-card h3 {
+      color: #007B5E;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .rule-card p {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .speak-btn {
+      margin-right: 10px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007B5E;
+      color: white;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin: 40px 10px 0;
+      background-color: #007B5E;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background-color: #005c45;
+    }
+
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .ltr {
+      direction: ltr;
+      text-align: left;
+    }
+
+    .diamond {
+      color: #007B5E;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .nav-buttons {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<h1>🌿 Tajweed Rules - Lesson 2 🌿</h1>
+
+<div class="lesson-container" id="lessonArea">
+  <!-- Rules will be injected here -->
+</div>
+
+<div class="nav-buttons">
+  <button class="back-btn" onclick="goBack()">⬅️ Previous</button>
+  <button class="back-btn" onclick="goNext()">➡️ Next</button>
+</div>
+
+<script>
+  const rules = [
+    {
+      key: "waqf",
+      title: "Waqf",
+      en: "Waqf refers to pausing at certain symbols during recitation.",
+      ur: "وقف کا مطلب ہے تلاوت کے دوران مخصوص علامات پر رکنا۔",
+      ar: "الوقف هو التوقف عند رموز معينة أثناء التلاوة."
+    },
+    {
+      key: "noon_saakin",
+      title: "Noon Saakin Rules",
+      en: "Rules related to Noon Saakin include Ikhfa, Idgham, Iqlab, and Izhar.",
+      ur: "نون ساکن کے قواعد میں اخفاء، ادغام، اقلاب اور اظہار شامل ہیں۔",
+      ar: "قواعد النون الساكنة تشمل الإخفاء، الإدغام، الإقلاب، والإظهار."
+    },
+    {
+      key: "meem_saakin",
+      title: "Meem Saakin Rules",
+      en: "Meem Saakin rules include Ikhfa Shafawi, Idgham Shafawi, and Izhar Shafawi.",
+      ur: "میم ساکن کے قواعد میں اخفاء شفوی، ادغام شفوی، اور اظہار شفوی شامل ہیں۔",
+      ar: "قواعد الميم الساكنة تشمل الإخفاء الشفوي، الإدغام الشفوي، والإظهار الشفوي."
+    },
+    {
+      key: "tajweed",
+      title: "Tajweed Definition",
+      en: "Tajweed is the set of rules governing correct pronunciation during Quranic recitation.",
+      ur: "تجوید قرآن کی درست ادائیگی کے اصولوں کا مجموعہ ہے۔",
+      ar: "التجويد هو مجموعة القواعد التي تنظم النطق الصحيح أثناء تلاوة القرآن."
+    }
+  ];
+
+  const lessonArea = document.getElementById("lessonArea");
+
+  rules.forEach(rule => {
+    const card = document.createElement("div");
+    card.className = "rule-card";
+    card.innerHTML = `
+      <h3>${rule.title}</h3>
+      <p class="ltr"><span class="diamond">🔹</span> ${rule.en}</p>
+      <button class="speak-btn" onclick="speak('${rule.en}', 'en', '${rule.key}')">🔊 Speak</button>
+
+      <p class="rtl"><span class="diamond">🔹</span> ${rule.ur}</p>
+      <button class="speak-btn" onclick="speak('${rule.ur}', 'ur', '${rule.key}')">🔊 Speak</button>
+
+      <p class="rtl"><span class="diamond">🔹</span> ${rule.ar}</p>
+      <button class="speak-btn" onclick="speak('${rule.ar}', 'ar', '${rule.key}')">🔊 Speak</button>
+    `;
+    lessonArea.appendChild(card);
+  });
+
+  let currentAudio = null;
+  let currentKey = "";
+  let isPaused = false;
+
+  function speak(text, lang, key) {
+    const cleanedText = text.replace(/🔹/g, "").replace(/<[^>]*>/g, "");
+
+    if (lang === "ur") {
+      const audioPath = "audio/" + key + ".mp3?v=" + new Date().getTime();
+
+      if (currentAudio && currentKey === key) {
+        if (isPaused) {
+          currentAudio.play();
+          isPaused = false;
+        } else {
+          currentAudio.pause();
+          isPaused = true;
+        }
+      } else {
+        if (currentAudio) {
+          currentAudio.pause();
+        }
+
+        currentAudio = new Audio(audioPath);
+        currentKey = key;
+        isPaused = false;
+        currentAudio.play();
+
+        currentAudio.onended = () => {
+          currentAudio = null;
+          currentKey = "";
+          isPaused = false;
+        };
+      }
+    } else if ("speechSynthesis" in window) {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      } else {
+        const utterance = new SpeechSynthesisUtterance(cleanedText);
+        utterance.lang = lang === "ar" ? "ar-SA" : "en-US";
+        speechSynthesis.speak(utterance);
+      }
+    } else {
+      alert("Speech synthesis not supported in your browser.");
+    }
+  }
+
+  function goBack() {
+    window.location.href = "rules.html";
+  }
+
+  function goNext() {
+    window.location.href = "practice.html";
+  }
+</script>
+
+</body>
+</html>
